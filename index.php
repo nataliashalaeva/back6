@@ -6,7 +6,7 @@ header('Content-Type: text/html; charset=UTF-8');
 $user = 'u52809';
 $pass = '3437720';
 
-$db = new PDO('mysql:host=localhost;dbname=u52813', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+$db = new PDO('mysql:host=localhost;dbname=u52809', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
 $pass_hash=array();
 try{
     $get=$db->prepare("select password from admin where name=?");
@@ -98,9 +98,9 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
         $values['walk'] = 0;
         $values['fly'] = 0;
         
-        $user = 'u52813';
-        $pass = '3993374';
-        $db = new PDO('mysql:host=localhost;dbname=u52813', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+        $user = 'u52809';
+        $pass = '3437720';
+        $db = new PDO('mysql:host=localhost;dbname=u52809', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
         try{
             $id=$_GET['edit_id'];
             $get=$db->prepare("SELECT * FROM form WHERE id=?");
@@ -212,7 +212,7 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
                 
                 $user = 'u52809';
                 $pass = '3437720';
-                $db = new PDO('mysql:host=localhost;dbname=u52813', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+                $db = new PDO('mysql:host=localhost;dbname=u52809', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
                 if(!$errors){
                     $upd=$db->prepare("UPDATE form SET name=:name, email=:email, year=:byear, pol=:pol, limbs=:limbs, bio=:bio WHERE id=:id");
                     $cols=array(
@@ -247,7 +247,7 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
             $id=$_POST['dd'];
             $user = 'u52809';
             $pass = '3437720';
-            $db = new PDO('mysql:host=localhost;dbname=u52978', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+            $db = new PDO('mysql:host=localhost;dbname=u52809', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
             try {
                 $del=$db->prepare("DELETE FROM super WHERE per_id=?");
                 $del->execute(array($id));
