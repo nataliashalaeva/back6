@@ -3,7 +3,7 @@
 if($_SERVER['REQUEST_METHOD']=='GET'){
   $user = 'u52809';
   $pass = '3437720';
-  $db = new PDO('mysql:host=localhost;dbname=u52813', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+  $db = new PDO('mysql:host=localhost;dbname=u52809', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
   $pass_hash=array();
   try{
     $get=$db->prepare("select password from admin where name=?");
@@ -61,5 +61,5 @@ if($_SERVER['REQUEST_METHOD']=='GET'){
  // print_r($inf2);
  // var_dump($inf2);
  // echo '</pre>';
-  include('list.php');
+  include('table.php');
 }
