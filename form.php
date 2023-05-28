@@ -1,4 +1,3 @@
-
 <html>
   <head>
     <style>
@@ -29,7 +28,7 @@ if (!empty($messages)) {
     <form action="" method="POST">
      <p> Форма </p>
  <p> Напишите имя, год и email. <br>
-      <input name="fio" <?php if ($errors['fio']) {print 'class="error"';} ?> value="<?php print $values['fio']; ?>" />
+      <input name="name" <?php if ($errors['name']) {print 'class="error"';} ?> value="<?php print $values['name'];?>" />
         <select name="year" <?php if ($errors['year']) {print 'class="error"';} ?>>
     <?php 
     for ($i = 1922; $i <= 2022; $i++) {
