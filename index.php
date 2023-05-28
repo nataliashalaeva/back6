@@ -1,4 +1,3 @@
-
 <?php
 echo "<link rel='stylesheet' href='style.css'>";
 header('Content-Type: text/html; charset=UTF-8');
@@ -12,16 +11,36 @@ try{
     $get=$db->prepare("select password from admin where name=?");
     $get->execute(array('admin'));
     $pass_hash=$get->fetchAll()[0][0];
+   // echo '<pre>';
+    //print_r($pass_hash);
+   // var_dump($pass_hash);
+   // echo '</pre>';
 }
 
 catch(PDOException $e){
     print('Error: '.$e->getMessage());
 }
 
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    $messages = array();
+    if (!empty($_COOKIE['save'])) {
+        setcookie('save', '', 100000);
+        $messages[] = 'Спасибо, результаты сохранены.';
+        setcookie('name_value', '', 100000);
+        setcookie('email_value', '', 100000);
+        setcookie('year_value', '', 100000);
+        setcookie('gender_value', '', 100000);
+        setcookie('limb_value', '', 100000);
+        setcookie('bio_value', '', 100000);
+        setcookie('superpower_value', '', 100000);
+        setcookie('check_value', '', 100000);
+    }
+}
+
 if (empty($_SERVER['PHP_AUTH_USER']) ||
     empty($_SERVER['PHP_AUTH_PW']) ||
     $_SERVER['PHP_AUTH_USER'] != 'admin' ||
-    password_verify($_SERVER['PHP_AUTH_PW'],$pass_hash[0][2])) {
+    password_verify($_SERVER['PHP_AUTH_PW'],$pass_hash[0][0])) {
         header('HTTP/1.1 401 Unanthorized');
         header('WWW-Authenticate: Basic realm="My site"');
         print('<h1>401 Unauthorized (Требуется авторизация)</h1>');
@@ -36,15 +55,13 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
         if (!empty($_COOKIE['save'])) {
             setcookie('save', '', 100000);
             $messages[] = 'Спасибо, результаты сохранены.';
-            setcookie('name_value', '', 100000);
+            setcookie('fio_value', '', 100000);
             setcookie('email_value', '', 100000);
             setcookie('year_value', '', 100000);
-            setcookie('pol_value', '', 100000);
-            setcookie('limb_value', '', 100000);
-            setcookie('bio_value', '', 100000);
-            setcookie('inv_value', '', 100000);
-            setcookie('walk_value', '', 100000);
-            setcookie('fly_value', '', 100000);
+            setcookie('gender_value', '', 100000);
+            setcookie('limbs_value', '', 100000);
+            setcookie('text_value', '', 100000);
+            setcookie('superpower_value', '', 100000);
             setcookie('check_value', '', 100000);
         }
         
@@ -53,11 +70,11 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
         $errors['name'] = !empty($_COOKIE['name_error']);
         $errors['email'] = !empty($_COOKIE['email_error']);
         $errors['year'] = !empty($_COOKIE['year_error']);
-        $errors['radio-1'] = !empty($_COOKIE['pol_error']);
-        $errors['radio-2'] = !empty($_COOKIE['limb_error']);
-        $errors['super'] = !empty($_COOKIE['super_error']);
-        $errors['bio'] = !empty($_COOKIE['bio_error']);
-        $errors['check-1'] = !empty($_COOKIE['check_error']);
+        $errors['gender'] = !empty($_COOKIE['pol_error']);
+        $errors['limbs'] = !empty($_COOKIE['limb_error']);
+        $errors['superpower'] = !empty($_COOKIE['superpower_error']);
+        $errors['text'] = !empty($_COOKIE['text_error']);
+        $errors['check'] = !empty($_COOKIE['check_error']);
         if ($errors['name']) {
             setcookie('name_error', '', 100000);
             $messages[] = '<div class="error">Заполните имя или у него неверный формат (only English)</div>';
@@ -73,30 +90,27 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
             $messages[] = '<div class="error">Выберите год.</div>';
             $error=TRUE;
         }
-        if ($errors['radio-1']) {
+        if ($errors['gender']) {
             setcookie('pol_error', '', 100000);
             $messages[] = '<div class="error">Выберите пол.</div>';
             $error=TRUE;
         }
-        if ($errors['radio-2']) {
+        if ($errors['limbs']) {
             setcookie('limb_error', '', 100000);
             $messages[] = '<div class="error">Укажите кол-во конечностей.</div>';
             $error=TRUE;
         }
-        if ($errors['super']) {
-            setcookie('super_error', '', 100000);
+        if ($errors['superpower']) {
+            setcookie('superpower_error', '', 100000);
             $messages[] = '<div class="error">Выберите суперспособности(хотя бы одну).</div>';
             $error=TRUE;
         }
-        if ($errors['bio']) {
-            setcookie('bio_error', '', 100000);
+        if ($errors['text']) {
+            setcookie('text_error', '', 100000);
             $messages[] = '<div class="error">Заполните биографию или у неё неверный формат (only English)</div>';
             $error=TRUE;
         }
         $values = array();
-        $values['inv'] = 0;
-        $values['walk'] = 0;
-        $values['fly'] = 0;
         
         $user = 'u52809';
         $pass = '3437720';
@@ -110,25 +124,37 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
             $values['name']=$inf[0]['name'];
             $values['email']=$inf[0]['email'];
             $values['year']=$inf[0]['year'];
-            $values['radio-1']=$inf[0]['pol'];
-            $values['radio-2']=$inf[0]['limbs'];
-            $values['bio']=$inf[0]['bio'];
-            
-            $get2=$db->prepare("SELECT name FROM super WHERE per_id=?");
+            $values['gender']=$inf[0]['pol'];
+            $values['limbs']=$inf[0]['limbs'];
+            $values['text']=$inf[0]['bio'];
+            $values['superpower'] = 't';
+            $values['check'] = TRUE;
+           // echo '<pre>';
+          //  print_r($inf);
+          //  var_dump($inf);
+          ////  echo '</pre>';
+            $get2=$db->prepare("SELECT * FROM Sform WHERE id_per=?");
             $get2->bindParam(1,$id);
             $get2->execute();
-            $inf2=$get2->fetchALL();
-            for($i=0;$i<count($inf2);$i++){
-                if($inf2[$i]['name']=='inv'){
-                    $values['inv']=1;
-                }
-                if($inf2[$i]['name']=='walk'){
-                    $values['walk']=1;
-                }
-                if($inf2[$i]['name']=='fly'){
-                    $values['fly']=1;
-                }
+            foreach ($get2 as $row){
+                
             }
+            $inf2=$get2->fetchALL();
+        //    echo '<pre>';
+        //     print_r($inf2);
+         //     echo '</pre>';
+            if($inf2 == '10'){
+            $values['superpower']='t';
+            }
+            if($inf2 == '20'){
+            $values['superpower']='b';
+            }
+            if($inf2 == '30'){
+            $values['superpower']='c';
+            }
+            if($inf2 == '40'){
+            $values['superpower']='p';
+           }
         }
         catch(PDOException $e){
             print('Error: '.$e->getMessage());
@@ -139,13 +165,13 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
     else {
         if(!empty($_POST['save'])){
             $id=$_POST['dd'];
-            $name = $_POST['name'];
+            $name = $_POST['fio'];
             $email = $_POST['email'];
             $year = $_POST['year'];
-            $pol=$_POST['radio-1'];
-            $limbs=$_POST['radio-2'];
-            $powers=$_POST['super'];
-            $bio=$_POST['bio'];
+            $pol=$_POST['gender'];
+            $limbs=$_POST['limbs'];
+            $powers=$_POST['superpower'];
+            $bio=$_POST['text'];
             
             //Регулярные выражения
             $bioregex = "/^\s*\w+[\w\s\.,-]*$/";
@@ -173,19 +199,19 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
                 }
                 
                 if (!isset($pol)) {
-                    setcookie('pol_error', '1', time() + 24 * 60 * 60);
-                    setcookie('pol_value', '', 100000);
+                    setcookie('gender_error', '1', time() + 24 * 60 * 60);
+                    setcookie('gender_value', '', 100000);
                     $errors = TRUE;
                 }
                 
                 if (!isset($limbs)) {
-                    setcookie('limb_error', '1', time() + 24 * 60 * 60);
-                    setcookie('limb_value', '', 100000);
+                    setcookie('limbs_error', '1', time() + 24 * 60 * 60);
+                    setcookie('limbs_value', '', 100000);
                     $errors = TRUE;
                 }
                 
                 if (!isset($powers)) {
-                    setcookie('super_error', '1', time() + 24 * 60 * 60);
+                    setcookie('superpower_error', '1', time() + 24 * 60 * 60);
                     $errors = TRUE;
                 }
                 
@@ -197,7 +223,7 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
                 
                 if ($errors) {
                     setcookie('save','',100000);
-                    header('Location: ind.php?edit_id='.$id);
+                    header('Location: index.php?edit_id='.$id);
                 }
                 else {
                     setcookie('name_error', '', 100000);
@@ -205,7 +231,7 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
                     setcookie('year_error', '', 100000);
                     setcookie('pol_error', '', 100000);
                     setcookie('limb_error', '', 100000);
-                    setcookie('super_error', '', 100000);
+                    setcookie('superpower_error', '', 100000);
                     setcookie('bio_error', '', 100000);
                     setcookie('check_error', '', 100000);
                 }
@@ -223,33 +249,26 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
                         ':limbs'=>$limbs,
                         ':bio'=>$bio
                     );
-                    foreach($cols as $k=>&$v){
-                        $upd->bindParam($k,$v);
-                    }
                     $upd->bindParam(':id',$id);
                     $upd->execute();
-                    $del=$db->prepare("DELETE FROM super WHERE per_id=?");
+                    $del=$db->prepare("DELETE FROM Sform WHERE id_per=?");
                     $del->execute(array($id));
-                    $upd1=$db->prepare("INSERT INTO super SET name=:power,per_id=:id");
+                    $upd1=$db->prepare("INSERT INTO Sform SET id_sup=:power,per_id=:id");
                     $upd1->bindParam(':id',$id);
-                    foreach($powers as $pwr){
-                        $upd1->bindParam(':power',$pwr);
-                        $upd1->execute();
-                    }
                 }
                 
                 if(!$errors){
                     setcookie('save', '1');
                 }
-                header('Location: ind.php?edit_id='.$id);
-        }
+                header('Location: index.php?edit_id='.$id);
+         }
         else {
             $id=$_POST['dd'];
             $user = 'u52809';
             $pass = '3437720';
             $db = new PDO('mysql:host=localhost;dbname=u52809', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
             try {
-                $del=$db->prepare("DELETE FROM super WHERE per_id=?");
+                $del=$db->prepare("DELETE FROM Sform WHERE id_per=?");
                 $del->execute(array($id));
                 $stmt = $db->prepare("DELETE FROM form WHERE id=?");
                 $stmt -> execute(array($id));
@@ -264,3 +283,4 @@ if (empty($_SERVER['PHP_AUTH_USER']) ||
         }
         
     }
+    
