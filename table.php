@@ -12,6 +12,10 @@
         <th>Bio</th>
       </tr>
       <?php
+      
+      echo "<link rel='stylesheet' href='style.css'>";
+      header('Content-Type: text/html; charset=UTF-8');
+      
      // echo '<pre>';
     //  print_r($pwrs);
      // var_dump($pwrs);
@@ -55,13 +59,17 @@
               echo '</td>
               <td>'.$user['bio'].'</td>
               <td>
-                <form method="get" action="ind.php">
+                <form method="get" action="index.php">
                   <input name=edit_id value='.$user['id'].' hidden>
                   <input type="submit" value=Edit>
                 </form>
               </td>
             </tr>';
        }
+      //  echo '<pre>';
+     //   print_r($user);
+        //var_dump($inf2);
+    //    echo '</pre>'
       ?>
     </table>
     <?php
