@@ -28,7 +28,7 @@ if (!empty($messages)) {
     <form action="" method="POST">
      <p> Форма </p>
  <p> Напишите имя, год и email. <br>
-      <input name="name" <?php if ($errors['name']) {print 'class="error"';} ?> value="<?php print $values['name'];?>" />
+      <input name="fio" <?php if ($errors['fio']) {print 'class="error"';} ?> value="<?php print $values['fio'];?>" />
         <select name="year" <?php if ($errors['year']) {print 'class="error"';} ?>>
     <?php 
     for ($i = 1922; $i <= 2022; $i++) {
@@ -80,9 +80,10 @@ if (!empty($messages)) {
 <div class="checkbox <?php if ($errors['check']) {print 'error';} ?> ">
                 <input type="checkbox" name="check" <?php if($values['check']==TRUE){print 'checked';} ?>/> С контактом ознакомлен(а)
             </div>
-<p>
-  <input type="submit" value="ok" />
-</p>
+
+ <input name='dd' hidden value=<?php print($_GET['edit_id']);?>>
+                <input type="submit" name='save' value="Save"/>
+                <input type="submit" name='del' value="Delete"/>
 
 <?php
             if(empty($_SESSION['login'])){
@@ -106,10 +107,6 @@ if (!empty($messages)) {
 </html>
 	
                 
-                <input name='dd' hidden value=<?php print($_GET['edit_id']);?>>
-                <input type="submit" name='save' value="Save"/>
-                <input type="submit" name='del' value="Delete"/>
-    </form>
              <a href='admin.php' class="button">Назад</a>
 
     </div>
