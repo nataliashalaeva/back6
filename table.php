@@ -15,11 +15,7 @@
       
       echo "<link rel='stylesheet' href='style.css'>";
       header('Content-Type: text/html; charset=UTF-8');
-      
-     // echo '<pre>';
-    //  print_r($pwrs);
-     // var_dump($pwrs);
-     // echo '</pre>';
+  
       foreach($users as $user){
           echo '
             <tr>
