@@ -61,9 +61,6 @@ if($_SERVER['REQUEST_METHOD']=='GET'){
   }
   $users=$inf;
   $pwrs=$inf2;
- // echo '<pre>';
- // print_r($inf2);
- // var_dump($inf2);
- // echo '</pre>';
+
   include('table.php');
 }
